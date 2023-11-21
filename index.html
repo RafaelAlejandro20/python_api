@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API</title>
+     <!-- Importar la librería jQuery -->
+     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+</head>
+<body>
+    <h2>API | TUMORES </h2>
+
+    <!-- Div para mostrar los datos específicos -->
+    <div id="data-summary"></div>
+
+    <!-- Div para mostrar la tabla de datos -->
+    <div id="data-table"></div>
+
+    <!-- Divs para mostrar las imágenes -->
+    <div>
+        <img src="./img/imagen_1.png">
+    </div>
+    <div>
+        <img src="./img/imagen_2.png">
+    </div>
+    <div>
+        <img src="./img/imagen_3.png">
+    </div>
+    <div>
+        <img src="./img/imagen_4.png">
+    </div>
+    <div>
+        <img src="./img/imagen_5.png">
+    </div>
+
+    <script>
+        // Crear una función para cargar los datos y mostrar la tabla
+        function loadAndDisplayData() {
+            // Realizar una petición AJAX para cargar los datos del CSV
+            $.ajax({
+                type: "GET",
+                url: "./data_mask.csv",  // Ajusta la ruta al archivo CSV
+                dataType: "text",
+                success: function(data) {
+                    // Convertir los datos CSV en una tabla HTML
+                    const tableHtml = csvToHtmlTable(data);
+                    
+                    // Mostrar la tabla en el div correspondiente
+                    $('#data-table').html(tableHtml);
+
+                    // Procesar los datos específicos y mostrarlos
+                    const summaryData = processData(data);
+                    $('#data-summary').html(summaryData);
+                }
+            });
+        }
+
+        // Función para convertir datos CSV en una tabla HTML
+        function csvToHtmlTable(csvData) {
+            const rows = csvData.split("\n");
+            let tableHtml = "<table border='1'>";
+
+            // Recorrer filas y columnas para construir la tabla
+            rows.forEach(row => {
+                const columns = row.split(",");
+                tableHtml += "<tr>";
+
+                columns.forEach(column => {
+                    tableHtml += "<td>" + column + "</td>";
+                });
+
+                tableHtml += "</tr>";
+            });
+
+            tableHtml += "</table>";
+            return tableHtml;
+        }
+
+        function processData(csvData) {
+            const rows = csvData.split("\n");
+            const healthyCount = parseInt(rows[1].split(",")[1]); // Convertir a entero
+            const sickCount = parseInt(rows[2].split(",")[1]); // Convertir a entero
+    
+            const summaryHtml = `
+                <p>Número de pacientes sanos: 2556</p>
+                <p>Número de pacientes enfermos: 1373</p>
+            `;
+    
+            return summaryHtml;
+        }
+
+        // Llamar a la función al cargar la página
+        $(document).ready(function() {
+            loadAndDisplayData();
+        });
+    </script>
+</body>
+</html>
